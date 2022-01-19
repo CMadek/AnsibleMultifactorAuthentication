@@ -1,0 +1,4 @@
+---
+
+- name: install and configure Duo
+  include_tasks: "{{ansible_facts.distribution}}.yml"

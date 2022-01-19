@@ -1,0 +1,22 @@
+---
+- hosts: all
+  vars_prompt:
+    - name: ikey
+      prompt: "Duo integration key: "
+      private: no
+    
+    - name: skey
+      prompt: "Duo secret key: "
+      private: no
+
+    - name: duo_host
+      prompt: "Duo API hostname: "
+      private: no
+
+    - name: failopen
+      prompt: "(True/False) Fail open"
+      private: no
+  become: true
+  become_method: sudo
+  roles:
+  - Linux_Duo

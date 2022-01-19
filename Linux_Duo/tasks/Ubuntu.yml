@@ -1,0 +1,38 @@
+---
+- debug:
+    msg: "deb https://pkg.duosecurity.com/{{ansible_facts.distribution}} {{ansible_facts.lsb.codename}} main"
+    
+- name: install the gpg key
+  ansible.builtin.apt_key:
+    url: https://duo.com/DUO-GPG-PUBLIC-KEY.asc
+    state: present
+
+- name: add the duo-unix repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://pkg.duosecurity.com/{{ansible_facts.distribution}} {{ansible_facts.lsb.codename}}  main"
+
+- name: install duo-unix
+  apt:
+    name: "duo-unix"
+    state: present
+
+- name: create the duo configuration file
+  ansible.builtin.template:
+    src: pam_duo.conf.j2
+    dest: /etc/duo/pam_duo.conf
+
+- name: Add SSH configuration
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "{{item}}" 
+  with_items:
+    - "UsePAM yes"
+    - "ChallengeResponseAuthentication yes"
+    - "UseDNS no"
+
+- name: add pam_duo to common-auth
+  ansible.builtin.copy:
+    src: common-auth
+    dest: /etc/pam.d/
+
+
