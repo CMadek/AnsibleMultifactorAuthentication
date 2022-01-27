@@ -1,8 +1,4 @@
 ---
-- debug:
-    msg: "deb https://pkg.duosecurity.com/{{ansible_facts.distribution}} {{ansible_facts.lsb.codename}} main"
-
-
 - name: install the gpg key
   ansible.builtin.apt_key:
     url: https://duo.com/DUO-GPG-PUBLIC-KEY.asc
@@ -26,7 +22,7 @@
 - name: Add SSH configuration
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "{{item}}" 
+    line: "{{item}}"
   with_items:
     - "UsePAM yes"
     - "ChallengeResponseAuthentication yes"
@@ -36,5 +32,3 @@
   ansible.builtin.copy:
     src: common-auth
     dest: /etc/pam.d/
-
-

@@ -1,0 +1,17 @@
+---
+- name: get chocolatey info
+  win_chocolatey_facts:
+  ignore_errors: true
+  register: chocolatey
+
+- name: install via chocolatey
+  chocolatey.chocolatey.win_chocolatey: 
+    name: duo-authentication
+    install_args: '/IKEY="{{ikey}}" /SKEY="{{skey}}" /HOST="{{duo_host}}" /AUTOPUSH="#1" /FAILOPEN="#1" /SMARTCARD="#0" /RDPONLY="#0"'
+  when: chocolatey.failed == False
+
+- name: run the duo windows installer
+  ansible.windows.win_package:
+    path: 'https://dl.duosecurity.com/duo-win-login-latest.exe'
+    arguments: '/qn IKEY="{{ikey}}" SKEY="{{skey}}" HOST="{{duo_host}}" AUTOPUSH="#1" FAILOPEN="#1" SMARTCARD="#0" RDPONLY="#0"'
+    wait_for_children: yes

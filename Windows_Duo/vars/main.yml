@@ -1,0 +1,7 @@
+---
+# vars file for Windows_Duo
+ansible_password: "Detroit$ma$h!"
+ansible_user: "ConnorAdmin"
+ansible_connection: winrm
+ansible_winrm_transport: ntlm
+ansible_port: 5985
