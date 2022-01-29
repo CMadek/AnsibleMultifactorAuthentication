@@ -1,0 +1,22 @@
+---
+- hosts: centos
+  become: true
+  become_method: sudo
+  vars_prompt:
+    - name: "domain_admin"
+      prompt: "Domain Admin Username (to join to the Windows domain)"
+      private: no
+    - name: "domain_controller_fqdn"
+      prompt: "Domain to join"
+      private: no
+    - name: "domain_admin_password"
+      prompt: "Domain Admin Password"
+      private: yes
+    - name: "permitted_groups"
+      prompt: "Groups permitted to access machine (comma delimited) \n e.g. Group 1,Group 2,Group etc"
+      private: no
+    - name: "sudoers_groups"
+      prompt: "Permitted groups to be added as sudoers (comma delimited) \n e.g. Group 1,Group 2,Group etc"
+      private: no
+  roles:
+  - Linux_SSSD

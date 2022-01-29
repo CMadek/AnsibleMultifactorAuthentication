@@ -1,0 +1,5 @@
+---
+- name: install google-authenticator
+  apt:
+    name: "libpam-google-authenticator"
+    state: present
