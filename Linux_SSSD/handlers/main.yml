@@ -1,2 +1,12 @@
 ---
 # handlers file for Linux_SSSD
+
+- name: restart sssd
+  service:
+    name: sssd
+    status: restarted
+
+- name: restart sshd
+  service:
+    name: sshd
+    status: restarted
