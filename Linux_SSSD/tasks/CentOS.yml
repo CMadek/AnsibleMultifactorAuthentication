@@ -1,0 +1,42 @@
+---
+- name: Install requisite packages for domain authenticaition
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - "epel-release"
+    - "sssd"
+    - "oddjob"
+    - "oddjob-mkhomedir"
+    - "adcli"
+    - "realmd"
+
+- name: Join the machine to the domain
+  shell: "realm join --user={{domain_admin}} {{domain_controller_fqdn}}"
+
+- name: install sssd configuration for domain authenticaition
+  copy:
+    src: sssd.conf
+    dest: /etc/sssd/sssd.conf
+  notify:
+    - restart sssd
+
+- name: install pam config for domain authenticaition
+  copy:
+    src: sshd
+    dest: /etc/pam.d/sshd
+  notify:
+    - restart sshd
+
+- name: configure sudoer groups
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers.d/domain_groups
+    line: "%{{item}} ALL=(ALL) NOPASSWD: ALL"
+  with_items:
+    - sudoers_groups
+
+
+- name: configure groups permitted to access the machine
+  shell: "realm permit -g {{permitted_groups}}"
+  notify:
+    - restart sssd
