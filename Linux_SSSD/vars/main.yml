@@ -1,2 +1,6 @@
 ---
 # vars file for Linux_SSSD
+domain_admin:
+domain_admin_password :
+domain_controller_fqdn :
+permitted_groups :
