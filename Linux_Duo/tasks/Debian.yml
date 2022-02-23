@@ -10,7 +10,7 @@
     state: present
 
 - name: install duo-unix
-  apt:
+  ansible.builtin.apt:
     name: "duo-unix"
     state: present
 
