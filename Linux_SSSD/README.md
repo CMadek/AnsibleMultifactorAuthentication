@@ -1,31 +1,15 @@
 Linux SSSD
 =========
 
-A brief description of the role goes here.
+Install and configure domain authentication using SSSD
 
-Requirements
-------------
-
-.
 
 Role Variables
 --------------
-
-.
-
-Dependencies
-------------
-
-
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+- domain_admin - the username for domain admin joining the target host to the domain
+- domain_admin_password - the domain admin's password
+- domain_controller_fqdn - the domain the target host will join
+- permitted_groups - the comma delimited list of group that will be allowed to connect to the server
 
 License
 -------
