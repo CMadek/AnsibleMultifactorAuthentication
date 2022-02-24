@@ -1,41 +1,21 @@
 ---
-- name: install the gpg key
-  ansible.builtin.rpm_key:
-    key: https://duo.com/DUO-GPG-PUBLIC-KEY.asc
-    state: present
-
-- name: add the repo file
-  ansible.builtin.yum_repository:
-    name: "DuoSecurityRepository"
-    description: "DuoSecurity"
-    baseurl: "https://pkg.duosecurity.com/RedHat/$releasever/$basearch"
-    enabled: yes
-    gpgcheck: yes
-
-- name: Install duo_unix
+- name: Install google authenticator
   yum:
-    name: duo_unix
-    state: latest
-
-- name: create the duo configuration file
-  ansible.builtin.template:
-    src: pam_duo.conf.j2
-    dest: /etc/duo/pam_duo.conf
+    name: google-authenticator
+    state: present
 
 - name: Add SSH configuration
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "{{item}}" 
+    line: "{{ item} }"
   with_items:
     - "UsePAM yes"
     - "ChallengeResponseAuthentication yes"
     - "UseDNS no"
 
-- name: Add duo_unix to pam.d/sshd
+- name: Add google-authenticator to pam.d/sshd
   ansible.builtin.lineinfile:
     path: /etc/pam.d/sshd
     insertafter: "auth."
     firstmatch: "yes"
-    line: "auth       required     pam_duo.so" 
-
-
+    line: "auth       required     pam_google_authenticator.so nullok"

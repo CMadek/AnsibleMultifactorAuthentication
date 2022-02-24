@@ -2,7 +2,7 @@
 - name: Install google authenticator
   yum:
     name: google-authenticator
-    state: latest
+    state: present
 
 - name: Add SSH configuration
   ansible.builtin.lineinfile:

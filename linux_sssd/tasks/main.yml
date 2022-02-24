@@ -1,4 +1,4 @@
 ---
 # tasks file for Linux_SSSD
 - name: install and configure SSSD
-  include_tasks: "{{ansible_facts.distribution}}.yml"
+  include_tasks: "{{ ansible_facts.distribution }}.yml"

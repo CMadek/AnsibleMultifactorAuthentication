@@ -2,12 +2,12 @@
 - name: Install google authenticator
   yum:
     name: google-authenticator
-    state: latest
+    state: present
 
 - name: Add SSH configuration
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "{{item}}"
+    line: "{{ item }}"
   with_items:
     - "UsePAM yes"
     - "ChallengeResponseAuthentication yes"

@@ -1,6 +1,8 @@
 ---
-- set_fact:
+- name: Set Duo install arguments
+  set_fact:
     install_string: '/IKEY="{{ ikey }}" /SKEY="{{ skey }}" /HOST="{{ duo_host }}" /AUTOPUSH="#1" /FAILOPEN="#1" /SMARTCARD="#0" /RDPONLY="#{{ rdp_only }}"'
+
 - name: get chocolatey info
   win_chocolatey_facts:
   ignore_errors: true
