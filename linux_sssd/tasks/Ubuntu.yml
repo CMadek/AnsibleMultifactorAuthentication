@@ -1,33 +1,53 @@
 ---
-- name: install the gpg key
-  ansible.builtin.apt_key:
-    url: https://duo.com/DUO-GPG-PUBLIC-KEY.asc
-    state: present
-
-- name: add the duo-unix repository
-  ansible.builtin.apt_repository:
-    repo: "deb https://pkg.duosecurity.com/{{ansible_facts.distribution}} {{ansible_facts.lsb.codename}}  main"
-
-- name: install duo-unix
+- name: Install requisite packages for domain authenticaition
   ansible.builtin.apt:
-    name: "duo-unix"
-    state: present
+    name:
+    - "epel-release"
+    - "sssd"
+    - "oddjob"
+    - "oddjob-mkhomedir"
+    - "adcli"
+    - "realmd"
+    - "samba-common-tools"
+    state: latest
 
-- name: create the duo configuration file
-  ansible.builtin.template:
-    src: pam_duo.conf.j2
-    dest: /etc/duo/pam_duo.conf
+- name: Join the machine to the domain
+  ansible.builtin.shell: "echo {{ domain_admin_password }} | realm join --user={{ domain_admin }} {{ domain_controller_fqdn }}"
+  register: realm_status
+  failed_when: 'realm_status.rc != 0 and realm_status.stderr != "realm: Already joined to this domain"'
+  notify:
+    - restart sssd
+    - restart sshd
 
-- name: Add SSH configuration
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "{{item}}"
+- name: enable services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
   with_items:
-    - "UsePAM yes"
-    - "ChallengeResponseAuthentication yes"
-    - "UseDNS no"
+    - "realmd"
+    - "sssd"
 
-- name: add pam_duo to common-auth
-  ansible.builtin.copy:
-    src: common-auth
-    dest: /etc/pam.d/
+- name: create a sudoers file in suoders.d for domain groups
+  ansible.builtin.file:
+    path: /etc/sudoers.d/domain_groups
+    state: touch
+
+- name: configure sudoer groups
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers.d/domain_groups
+    line: "%{{ item }} ALL=(ALL) NOPASSWD: ALL"
+  with_items:
+    - sudoers_groups
+
+- name: configure groups permitted to access the machine
+  ansible.builtin.shell: "realm permit -g {{ permitted_groups }}"
+
+
+- name: update the file permissions on id and getent commands
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0750"
+  with_items:
+    - "/bin/id"
+    - "/bin/getent"

@@ -1,5 +1,53 @@
 ---
-- name: install google-authenticator
-  apt:
-    name: "libpam-google-authenticator"
-    state: present
+- name: Install requisite packages for domain authenticaition
+  ansible.builtin.apt:
+    name:
+    - "epel-release"
+    - "sssd"
+    - "oddjob"
+    - "oddjob-mkhomedir"
+    - "adcli"
+    - "realmd"
+    - "samba-common-tools"
+    state: latest
+
+- name: Join the machine to the domain
+  ansible.builtin.shell: "echo {{ domain_admin_password }} | realm join --user={{ domain_admin }} {{ domain_controller_fqdn }}"
+  register: realm_status
+  failed_when: 'realm_status.rc != 0 and realm_status.stderr != "realm: Already joined to this domain"'
+  notify:
+    - restart sssd
+    - restart sshd
+
+- name: enable services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  with_items:
+    - "realmd"
+    - "sssd"
+
+- name: create a sudoers file in suoders.d for domain groups
+  ansible.builtin.file:
+    path: /etc/sudoers.d/domain_groups
+    state: touch
+
+- name: configure sudoer groups
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers.d/domain_groups
+    line: "%{{ item }} ALL=(ALL) NOPASSWD: ALL"
+  with_items:
+    - sudoers_groups
+
+- name: configure groups permitted to access the machine
+  ansible.builtin.shell: "realm permit -g {{ permitted_groups }}"
+
+
+- name: update the file permissions on id and getent commands
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0750"
+  with_items:
+    - "/bin/id"
+    - "/bin/getent"
