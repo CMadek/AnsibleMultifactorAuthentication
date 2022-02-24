@@ -6,7 +6,7 @@
 
 - name: add the duo-unix repository
   ansible.builtin.apt_repository:
-    repo: "deb https://pkg.duosecurity.com/{{ansible_facts.distribution}} {{ansible_facts.lsb.codename}}  main"
+    repo: "deb https://pkg.duosecurity.com/{{ ansible_facts.distribution }} {{ ansible_facts.lsb.codename }}  main"
 
 - name: install duo-unix
   ansible.builtin.apt:
@@ -21,7 +21,7 @@
 - name: Add SSH configuration
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "{{item}}"
+    line: "{{ item }}"
   with_items:
     - "UsePAM yes"
     - "ChallengeResponseAuthentication yes"
