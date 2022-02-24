@@ -1,0 +1,1 @@
+duo-win-login-4.0.2.exe /S /V" /qn IKEY="DIXXXXXXXXXXXXXXXXXXXX" SKEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" HOST="api-xxxxxxxx.duosecurity.com" AUTOPUSH="#1" FAILOPEN="#1" SMARTCARD="#0" RDPONLY="#0""
