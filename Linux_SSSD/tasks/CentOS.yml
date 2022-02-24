@@ -12,7 +12,7 @@
     state: latest
 
 - name: Join the machine to the domain
-  ansible.builtin.shell: "echo {{domain_admin_password}} | realm join --user={{domain_admin}} {{domain_controller_fqdn}}"
+  ansible.builtin.shell: "echo {{ domain_admin_password }} | realm join --user={{ domain_admin }} {{ domain_controller_fqdn }}"
   register: realm_status
   failed_when: 'realm_status.rc != 0 and realm_status.stderr != "realm: Already joined to this domain"'
   notify:
@@ -21,7 +21,7 @@
 
 - name: enable services
   ansible.builtin.service:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: started
     enabled: true
   with_items:
@@ -36,17 +36,17 @@
 - name: configure sudoer groups
   ansible.builtin.lineinfile:
     dest: /etc/sudoers.d/domain_groups
-    line: "%{{item}} ALL=(ALL) NOPASSWD: ALL"
+    line: "%{{ item }} ALL=(ALL) NOPASSWD: ALL"
   with_items:
     - sudoers_groups
 
 - name: configure groups permitted to access the machine
-  shell: "realm permit -g {{permitted_groups}}"
+  shell: "realm permit -g {{ permitted_groups }}"
 
 
 - name: update the file permissions on id and getent commands
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     mode: "0750"
   with_items:
     - "/bin/id"
