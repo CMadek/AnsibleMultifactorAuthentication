@@ -19,4 +19,4 @@
       prompt: "Permitted groups to be added as sudoers (comma delimited) \n e.g. Group 1,Group 2,Group etc"
       private: no
   roles:
-  - Linux_SSSD
+  - linux_sssd

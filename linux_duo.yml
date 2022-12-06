@@ -1,10 +1,11 @@
 ---
 - hosts: all
+  gather_facts: true
   vars_prompt:
     - name: ikey
       prompt: "Duo integration key: "
       private: no
-    
+
     - name: skey
       prompt: "Duo secret key: "
       private: no
@@ -19,4 +20,4 @@
   become: true
   become_method: sudo
   roles:
-  - Linux_Duo
+  - linux_duo

@@ -1,6 +1,6 @@
 ---
 - name: Install requisite packages for domain authenticaition
-  ansible.builtin.yum:
+  ansible.builtin.package:
     name:
     - "epel-release"
     - "sssd"
@@ -43,7 +43,7 @@
 - name: configure groups permitted to access the machine
   ansible.builtin.shell: "realm permit -g {{ item }}"
   with_items:
-    - "{{ permitted_groups.split(',') }}"
+    - "{{ permitted_groups.split(',') + sudoers_groups.split(',') }}"
 
 - name: update the file permissions on id and getent commands
   ansible.builtin.file:
