@@ -1,6 +1,6 @@
 ---
 - name: Install google authenticator
-  yum:
+  ansible.builtin.package:
     name: google-authenticator
     state: present
 

@@ -13,7 +13,7 @@
     gpgcheck: yes
 
 - name: Install duo_unix
-  ansible.builtin.yum:
+  ansible.builtin.package:
     name: duo_unix
     state: latest
 

@@ -9,7 +9,7 @@
     repo: "deb https://pkg.duosecurity.com/{{ ansible_facts.distribution }} {{ ansible_facts.lsb.codename }}  main"
 
 - name: install duo-unix
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: "duo-unix"
     state: present
 
